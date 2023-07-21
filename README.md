@@ -4,6 +4,7 @@ Simple stand-alone library to handle Azure AD SSO flow.
 
 - Tested with `PHP 5.6 - 8.1`
 - `allow_url_fopen` must be `true` in `php.ini` to use HTTP requests.
+- Requires `ext-openssl`.
 
 ## License
 

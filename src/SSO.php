@@ -101,13 +101,13 @@ class SSO
      */
     public function authorize($state = '')
     {
-        $code = $_REQUEST['code'] ?? null;
+        $code = isset($_REQUEST['code']) ? $_REQUEST['code'] : null;
         
         if (!$code) throw new \RuntimeException(
             'Expected "code" during token fetch in request parameters.'
         );
 
-        $responseState = $_REQUEST['state'] ?? null;
+        $responseState = isset($_REQUEST['state']) ? $_REQUEST['state'] : null;
         
         if ($responseState !== $state) throw new \RuntimeException(
             'Invalid "state" (CSRF)'
@@ -264,7 +264,7 @@ class SSO
                 0,
                 $lastError['type'],
                 $lastError['file'],
-                $lastError['line'],
+                $lastError['line']
             );
         }
 
