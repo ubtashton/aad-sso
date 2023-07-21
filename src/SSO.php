@@ -61,6 +61,7 @@ class SSO
 
     /**
      * @param string $redirectUrl           Whitelisted redirect URL
+     * @param string $tenant                Tenant (foobar.com)
      * @param string $applicationId         Application (client) ID
      * @param string $applicationSecret     Client secret value
      */
