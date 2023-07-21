@@ -15,7 +15,7 @@ See `test/` for code examples.
 
 You can run example with PHP's built-in web server:
 ```
-foo@bar test]$ AAD_TENANT=foobar.com AAD_ID=00000000-0000-0000-0000-000000000000 AAD_SECRET=foo php -S localhost:8080 -t
+foo@bar test]$ AAD_TENANT=foobar.com AAD_ID=00000000-0000-0000-0000-000000000000 AAD_SECRET=foo php -S localhost:8080 -t .
 ```
 
 **Remember: you need to add `http://localhost:8080/auth.php` as valid Redirect URI.**
