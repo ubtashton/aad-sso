@@ -10,6 +10,13 @@ Simple stand-alone library to handle Azure AD SSO flow.
 
 MIT License
 
+## Install
+
+You can use Composer:
+```
+composer require nhujanen/aad-sso
+```
+
 ## Example
 
 See `test/` for code examples.
