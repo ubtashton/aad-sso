@@ -1,4 +1,4 @@
-# Azure AD SSO helper
+# Stand-alone Azure AD SSO for PHP 5.6+
 
 Simple stand-alone library to handle Azure AD SSO flow.
 
