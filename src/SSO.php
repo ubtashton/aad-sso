@@ -75,8 +75,8 @@ class SSO
     /**
      * Get URL for login
      * 
-     * @param string $state     CSRF token - if given, required in authorize()
-     * @return string           URL
+     * @param string $state         CSRF token - if given, required in authorize()
+     * @return string               URL
      */
     public function getUrl($state = '')
     {
@@ -140,7 +140,7 @@ class SSO
     /**
      * Get current user profile
      * 
-     * @return mixed                https://graph.microsoft.com/v1.0/$metadata#users/$entity
+     * @return object               https://graph.microsoft.com/v1.0/$metadata#users/$entity
      * 
      * @throws \Exception           Programmer error
      * @throws \ErrorException      PHP error (fopen on url)
@@ -170,7 +170,11 @@ class SSO
      * Get user groups
      * NOTICE: This requires forced admin role on AAD application (Group.Read.All)
      * 
-     * @return mixed 
+     * @return object 
+     * 
+     * @throws \Exception           Programmer error
+     * @throws \ErrorException      PHP error (fopen on url)
+     * @throws \RuntimeException    General error
      */
     public function groups()
     {
@@ -190,6 +194,15 @@ class SSO
 
     /**
      * HTTP POST helper
+     * 
+     * @param string $url           URL to post
+     * @param array $payload        Payload (assoc)
+     * @param array $headers        HTTP headers
+     * @return string               Response content 
+     * 
+     * @throws \ErrorException      fopen permission issue/fail (allow_url_fopen)
+     * @throws \RuntimeException    Timeout
+     * @throws \Exception           HTTP Response code not 2xx
      */
     protected function post($url, array $payload = [], array $headers = [])
     {
@@ -214,6 +227,15 @@ class SSO
 
     /**
      * HTTP GET helper
+     * 
+     * @param string $url           URL to post
+     * @param array $query          Query (assoc)
+     * @param array $headers        HTTP headers
+     * @return string               Response content 
+     * 
+     * @throws \ErrorException      fopen permission issue/fail (allow_url_fopen)
+     * @throws \RuntimeException    Timeout
+     * @throws \Exception           HTTP Response code not 2xx
      */
     protected function get($url, array $query = [], array $headers = [])
     {
@@ -247,6 +269,14 @@ class SSO
 
     /**
      * HTTP Request handler
+     * 
+     * @param string $url               URL to request
+     * @param resource $streamContext   Stream Context
+     * @return string                   Raw response data
+     * 
+     * @throws \ErrorException      fopen permission issue/fail (allow_url_fopen)
+     * @throws \RuntimeException    Timeout
+     * @throws \Exception           HTTP Response code not 2xx
      */
     protected function request($url, $streamContext)
     {
