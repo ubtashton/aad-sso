@@ -1,0 +1,23 @@
+{
+    "name": "nhujanen/aad-sso",
+    "description": "Stand-alone Azure AD SSO library",
+    "type": "library",
+    "keywords": ["sso", "azure ad"],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "nhujanen\\AAD\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Niko Hujanen",
+            "email": "niko.hujanen@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
