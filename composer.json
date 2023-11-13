@@ -1,5 +1,5 @@
 {
-    "name": "nhujanen/aad-sso",
+    "name": "ubtashton/aad-sso",
     "description": "Stand-alone Azure AD SSO library",
     "type": "library",
     "keywords": ["sso", "azure ad"],
@@ -10,13 +10,16 @@
     },
     "autoload": {
         "psr-4": {
-            "nhujanen\\AAD\\": "src/"
+            "ubtashton\\AAD\\": "src/"
         }
     },
     "authors": [
         {
             "name": "Niko Hujanen",
             "email": "niko.hujanen@gmail.com"
+        },{
+            "name": "Ubtashton",
+            "email": "ashton.smith@ubteam.com"
         }
     ],
     "minimum-stability": "stable",

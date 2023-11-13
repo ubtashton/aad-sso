@@ -1,6 +1,6 @@
 <?php
 
-namespace nhujanen\AAD;
+namespace ubtashton\AAD;
 
 class SSO
 {
