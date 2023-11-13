@@ -7,27 +7,27 @@ class SSO
     /**
      * Default scopes to request
      */
-    const SCOPE         = 'openid email profile';
+    const SCOPE = 'openid email profile';
 
     /**
      * User agent reported on HTTP requests
      */
-    const USER_AGENT    = 'AADSSO/1.0';
+    const USER_AGENT = 'AADSSO/1.0';
 
     /**
      * HTTP request timeout
      */
-    const TIMEOUT       = 3.0;
+    const TIMEOUT = 3.0;
 
     /**
      * OAuth2 base URL
      */
-    const URL_LOGIN     = 'https://login.microsoftonline.com';
+    const URL_LOGIN = 'https://login.microsoftonline.com';
 
     /**
      * Graph API base URL
      */
-    const URL_GRAPH     = 'https://graph.microsoft.com/v1.0';
+    const URL_GRAPH = 'https://graph.microsoft.com/v1.0';
 
     /**
      * Redirect Url for authorization
@@ -67,10 +67,10 @@ class SSO
      */
     public function __construct($redirectUrl, $tenant, $applicationId, $applicationSecret)
     {
-        $this->redirectUrl          = $redirectUrl;
-        $this->tenant               = $tenant;
-        $this->applicationId        = $applicationId;
-        $this->applicationSecret    = $applicationSecret;
+        $this->redirectUrl = $redirectUrl;
+        $this->tenant = $tenant;
+        $this->applicationId = $applicationId;
+        $this->applicationSecret = $applicationSecret;
     }
 
     /**
@@ -81,7 +81,8 @@ class SSO
      */
     public function getUrl($state = '')
     {
-        return sprintf('%s/%s/oauth2/v2.0/authorize?response_type=code&redirect_uri=%s&client_id=%s&response_mode=query&scope=%s&state=%s',
+        return sprintf(
+            '%s/%s/oauth2/v2.0/authorize?response_type=code&redirect_uri=%s&client_id=%s&response_mode=query&scope=%s&state=%s',
             static::URL_LOGIN,
             $this->tenant,
             urlencode($this->redirectUrl),
@@ -103,37 +104,45 @@ class SSO
     public function authorize($state = '')
     {
         $code = isset($_REQUEST['code']) ? $_REQUEST['code'] : null;
-        
-        if (!$code) throw new \RuntimeException(
-            'Expected "code" during token fetch in request parameters.'
-        );
+
+        if (!$code)
+            throw new \RuntimeException(
+                'Expected "code" during token fetch in request parameters.'
+            );
 
         $responseState = isset($_REQUEST['state']) ? $_REQUEST['state'] : null;
-        
-        if ($responseState !== $state) throw new \RuntimeException(
-            'Invalid "state" (CSRF)'
-        );
-        
-        $response = json_decode($this->post(
-            sprintf('%s/%s/oauth2/v2.0/token', static::URL_LOGIN, $this->tenant),
-            [
-                'grant_type'    => 'authorization_code',
-                'client_id'     => $this->applicationId,
-                'client_secret' => $this->applicationSecret,
-                'scope'         => static::SCOPE,
-                'code'          => $code,
-                'redirect_uri'  => $this->redirectUrl,
-            ]
-        ));
 
-        if (!$response) throw new \RuntimeException(sprintf(
-            'Invalid response: %s',
-            json_last_error_msg()
-        ));
+        if ($responseState !== $state)
+            throw new \RuntimeException(
+                'Invalid "state" (CSRF)'
+            );
 
-        if (!isset($response->token_type) || !isset($response->access_token)) throw new \RuntimeException(
-            'Invalid format on response.'
+        $response = json_decode(
+            $this->post(
+                sprintf('%s/%s/oauth2/v2.0/token', static::URL_LOGIN, $this->tenant),
+                [
+                    'grant_type' => 'authorization_code',
+                    'client_id' => $this->applicationId,
+                    'client_secret' => $this->applicationSecret,
+                    'scope' => static::SCOPE,
+                    'code' => $code,
+                    'redirect_uri' => $this->redirectUrl
+                ]
+            )
         );
+
+        if (!$response)
+            throw new \RuntimeException(
+                sprintf(
+                    'Invalid response: %s',
+                    json_last_error_msg()
+                )
+            );
+
+        if (!isset($response->token_type) || !isset($response->access_token))
+            throw new \RuntimeException(
+                'Invalid format on response.'
+            );
 
         $this->accessToken = $response->access_token;
     }
@@ -149,20 +158,26 @@ class SSO
      */
     public function me()
     {
-        if (!$this->accessToken) throw new \Exception(
-            'No access token available.'
+        if (!$this->accessToken)
+            throw new \Exception(
+                'No access token available.'
+            );
+
+        $response = json_decode(
+            $this->get(
+                sprintf('%s/me', static::URL_GRAPH),
+                [],
+                ["Authorization: Bearer {$this->accessToken}"]
+            )
         );
 
-        $response = json_decode($this->get(
-            sprintf('%s/me', static::URL_GRAPH),
-            [],
-            ["Authorization: Bearer {$this->accessToken}"]
-        ));
-            
-        if (!$response) throw new \RuntimeException(sprintf(
-            'Invalid response: %s',
-            json_last_error_msg()
-        ));
+        if (!$response)
+            throw new \RuntimeException(
+                sprintf(
+                    'Invalid response: %s',
+                    json_last_error_msg()
+                )
+            );
 
         return $response;
     }
@@ -179,18 +194,23 @@ class SSO
      */
     public function groups()
     {
-        $response = json_decode($this->get(
-            sprintf('%s/me/memberOf', static::URL_GRAPH),
-            [],
-            ["Authorization: Bearer {$this->accessToken}"]
-        ));
+        $response = json_decode(
+            $this->get(
+                sprintf('%s/me/memberOf', static::URL_GRAPH),
+                [],
+                ["Authorization: Bearer {$this->accessToken}"]
+            )
+        );
 
-        if (!$response) throw new \RuntimeException(sprintf(
-            'Invalid response: %s',
-            json_last_error_msg()
-        ));
+        if (!$response)
+            throw new \RuntimeException(
+                sprintf(
+                    'Invalid response: %s',
+                    json_last_error_msg()
+                )
+            );
 
-        return $response;    
+        return $response;
     }
 
     /**
@@ -207,18 +227,21 @@ class SSO
      */
     protected function post($url, array $payload = [], array $headers = [])
     {
-        $streamContext = stream_context_create([
-            'http' => [
-                'user_agent'    => static::USER_AGENT,
-                'timeout'       => static::TIMEOUT,
-                'method'        => 'POST',
-                'ignore_errors' => true,
-                'header'        => array_merge([
-                    'Content-Type: application/x-www-form-urlencoded',
-                ], $headers),
-                'content'       => http_build_query($payload),
-            ],
-        ]);
+        $payload = http_build_query($payload);
+
+        //refactor the above using arrays
+        $context_options = array(
+            'http' => array(
+                'method' => 'POST',
+                'header' => array(
+                    'Content-Type: application/x-www-form-urlencoded\r\n' .
+                    'Content-Length: ' . strlen($payload) . "\r\n"
+                ),
+                'content' => $payload
+            )
+        );
+
+        $streamContext = stream_context_create($context_options);
 
         return $this->request(
             $url,
@@ -229,7 +252,7 @@ class SSO
     /**
      * HTTP GET helper
      * 
-     * @param string $url           URL to post
+     * @param string $url           URL to get
      * @param array $query          Query (assoc)
      * @param array $headers        HTTP headers
      * @return string               Response content 
@@ -249,18 +272,17 @@ class SSO
                 "{$requestUrl}?";
 
             $requestUrl .= http_build_query($query);
-            
+
         }
 
-        $streamContext = stream_context_create([
-            'http' => [
-                'user_agent'    => static::USER_AGENT,
-                'timeout'       => static::TIMEOUT,
-                'method'        => 'GET',
-                'ignore_errors' => true,
-                'header'        => $headers,
-            ],
-        ]);
+        //refactor the above to use arrays
+        $context_options = array(
+            'http' => array(
+                'method' => 'GET',
+                'header' => $headers[0]
+            )
+        );
+        $streamContext = stream_context_create($context_options);
 
         return $this->request(
             $requestUrl,
@@ -281,7 +303,7 @@ class SSO
      */
     protected function request($url, $streamContext)
     {
-        $stream = @fopen(
+        $stream = fopen(
             $url,
             'r',
             false,
@@ -302,24 +324,31 @@ class SSO
         $streamMeta = stream_get_meta_data($stream);
         $streamData = stream_get_contents($stream);
 
-        if ($streamMeta['timed_out']) throw new \RuntimeException(sprintf(
-            'Request to "%s" timed out.',
-            $url
-        ));
+        if ($streamMeta['timed_out'])
+            throw new \RuntimeException(
+                sprintf(
+                    'Request to "%s" timed out.',
+                    $url
+                )
+            );
 
         list($httpVersion, $httpCode, $httpMessage) = explode(' ', $streamMeta['wrapper_data'][0], 3);
 
-        if ($httpCode < 200) throw new \Exception(
-            $httpMessage,
-            intval($httpCode)
-        );
-        if ($httpCode >= 300) throw new \Exception(
-            $httpMessage,
-            intval($httpCode)
-        );
+        if ($httpCode < 200)
+            throw new \Exception(
+                $httpMessage,
+                intval($httpCode)
+            );
+        if ($httpCode >= 300)
+            throw new \Exception(
+                $httpMessage,
+                intval($httpCode)
+            );
 
         fclose($stream);
 
         return $streamData;
     }
+
+
 }
