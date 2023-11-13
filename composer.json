@@ -1,5 +1,6 @@
 {
     "name": "ubtashton/aad-sso",
+    "version": "1.0.2",
     "description": "Stand-alone Azure AD SSO library",
     "type": "library",
     "keywords": ["sso", "azure ad"],
