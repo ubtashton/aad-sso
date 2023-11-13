@@ -1,6 +1,6 @@
 {
     "name": "ubtashton/aad-sso",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Stand-alone Azure AD SSO library",
     "type": "library",
     "keywords": ["sso", "azure ad"],
@@ -11,7 +11,7 @@
     },
     "autoload": {
         "psr-4": {
-            "ubtashton\\AAD\\": "src/"
+            "": "src/"
         }
     },
     "authors": [
